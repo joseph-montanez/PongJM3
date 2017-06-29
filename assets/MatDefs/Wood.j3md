@@ -1,0 +1,18 @@
+MaterialDef Wood Shader {
+    MaterialParameters {
+    }
+    Technique {
+        FragmentShader GLSL110: MatDefs/Wood.frag
+        VertexShader GLSL110: MatDefs/Wood.vert
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            WorldViewMatrix
+            NormalMatrix
+            ViewProjectionMatrix
+            ViewMatrix
+            CameraPosition
+            Time
+        }
+    }
+}

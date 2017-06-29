@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nifty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://nifty-gui.lessvoid.com/nifty-gui"
+       xsi:schemaLocation="https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd">
+    <useControls filename="nifty-default-controls.xml"/>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <screen id="GScreen0" controller="com.shabb.pongfinal.states.StartScreenState">
+        <layer id="GLayer0" childLayout="absolute">
+            <panel id="GPanel0" childLayout="absolute" width="50%" x="304" y="220" style="nifty-panel-simple" align="center" height="30%">
+
+                <control name="button" id="newGameButton" label="New Game"
+                         childLayout="center" visibleToMouse="true"
+                         width="50%" height="52px"
+                         x="25%" y="0">
+                    <interact onClick="startGame()"/>
+                </control>
+
+                <control name="button" id="exitButton" label="Exit"
+                         childLayout="center" visibleToMouse="true"
+                         width="50%" height="52px"
+                         x="25%" y="100">
+                    <interact onClick="exitGame()"/>
+                </control>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

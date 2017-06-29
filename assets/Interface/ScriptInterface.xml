@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nifty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://nifty-gui.lessvoid.com/nifty-gui" xsi:schemaLocation="https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd">
+    <useControls filename="nifty-default-controls.xml"/>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <screen id="ScriptScreen" controller="com.shabb.pongfinal.states.ScriptScreenState">
+        <layer id="Layer" childLayout="vertical" align="center">
+            <panel id="ConsolePanel" childLayout="vertical" visible="true" width="400px" style="nifty-panel-simple" align="center" height="400px">
+                <control name="nifty-console" id="console" width="100%" valign="center" align="center" lines="15"/>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

@@ -1,0 +1,16 @@
+Material MyMaterial : Common/MatDefs/Light/Lighting.j3md {
+    MaterialParameters {
+        Diffuse : 0.6 0.2 0.0 1.0
+        UseMaterialColors : true
+        ParallaxHeight : 0.05
+        Ambient : 0.6 0.6 0.0 1.0
+        SeparateTexCoord : false
+        BackfaceShadows : false
+        UseInstancing : false
+        VertexLighting : false
+        UseVertexColor : false
+        SteepParallax : false
+        Specular : 0.9019608 0.9019608 0.3019608 1.0
+        Shininess : 10.0
+    }
+}

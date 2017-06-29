@@ -1,0 +1,6 @@
+Material Wood2 : MatDefs/Wood.j3md {
+     MaterialParameters {
+     }
+    AdditionalRenderState {
+    }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nifty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://nifty-gui.lessvoid.com/nifty-gui" xsi:schemaLocation="https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd">
+    <useControls filename="nifty-default-controls.xml"/>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <screen id="GameInterface" controller="com.shabb.pongfinal.states.ScriptScreenState">
+        <layer id="Layer" childLayout="center" width="100%" align="center" valign="center" height="100%">
+            <image id="start-1" filename="Textures/start-1.png" width="328px" height="328px" align="center" valign="center">
+                <effect>
+                    <onCustom customKey="onFadeSizeIn" name="imageSizeFade" startSize="0.5" endSize="1.0" length="1000" neverStopRendering="true" />
+                </effect>
+            </image>
+            <image id="start-2" filename="Textures/start-2.png" width="328px" height="328px" align="center" valign="center">
+                <effect>
+                    <onCustom customKey="onFadeSizeIn" name="imageSizeFade" startSize="0.5" endSize="1.0" length="1000" neverStopRendering="true" />
+                </effect>
+            </image>
+            <image id="start-3" filename="Textures/start-3.png" width="328px" height="328px" align="center" valign="center">
+                <effect>
+                    <onCustom customKey="onFadeSizeIn" name="imageSizeFade" startSize="0.5" endSize="1.0" length="1000" neverStopRendering="true" />
+                </effect>
+            </image>
+        </layer>
+    </screen>
+</nifty>

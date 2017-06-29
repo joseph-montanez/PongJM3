@@ -1,0 +1,87 @@
+group 'com.shabb.pongfinal'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "http://dl.bintray.com/jmonkeyengine/com.jme3" }
+    maven { url "https://jitpack.io" }
+    jcenter()
+    mavenCentral()
+}
+
+sourceSets {
+    main.resources.srcDirs = ['src']
+}
+
+def jme3 = [v:'3.1.0-stable', g:'org.jmonkeyengine']
+def jphp = [v:'0.8.0', g:'org.develnext']
+
+dependencies {
+    //-- JMonkey
+    compile "${jme3.g}:jme3-core:${jme3.v}"
+    runtime "${jme3.g}:jme3-desktop:${jme3.v}"
+    runtime "${jme3.g}:jme3-lwjgl:${jme3.v}"
+    compile "${jme3.g}:jme3-plugins:${jme3.v}"
+    compile "${jme3.g}:jme3-jogg:${jme3.v}"
+    compile "${jme3.g}:jme3-niftygui:${jme3.v}"
+    compile "${jme3.g}:jme3-effects:${jme3.v}"
+    compile "${jme3.g}:jme3-bullet-native:${jme3.v}"
+    //-- JPHP
+    compile "${jphp.g}:jphp-core:${jphp.v}"
+    compile "${jphp.g}:jphp-scripting:${jphp.v}"
+    //-- Promite
+    compile 'org.jdeferred:jdeferred-android-aar:1.2.6'
+
+    runtime project(':assets')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task wrapper(type: Wrapper) {
+}
+
+task createDirs << {
+
+    def pkg = 'com.shabb.pongfinal'
+    def dirs = [
+            file("./src/main/java/$pkg"),
+            file("./src/main/resources"),
+            file("./assets/Interface"),
+            file("./assets/MatDefs"),
+            file("./assets/Materials"),
+            file("./assets/Models"),
+            file("./assets/Scenes"),
+            file("./assets/Shaders"),
+            file("./assets/Sounds"),
+            file("./assets/Textures"),
+    ]
+
+    dirs.each {
+        if( !it.exists() ) {
+            println "Creating " + it
+            it.mkdirs()
+        }
+        if( it.listFiles().length == 0 ) {
+            def stub = new File(it, 'removeme.txt')
+            println "Creating stub file to allow git checkin, file:$stub"
+            stub.text = "Remove me when there are files here."
+        }
+    }
+}
+
+project(":assets") {
+    apply plugin: "java"
+
+    buildDir = rootProject.file("build/assets")
+
+    sourceSets {
+        main {
+            resources {
+                srcDir '.'
+            }
+        }
+    }
+}
