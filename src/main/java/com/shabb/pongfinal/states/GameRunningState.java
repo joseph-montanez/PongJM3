@@ -27,10 +27,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
-import com.shabb.pongfinal.objects.Ball;
-import com.shabb.pongfinal.objects.Floor;
-import com.shabb.pongfinal.objects.Paddle;
-import com.shabb.pongfinal.objects.Stage1;
+import com.shabb.pongfinal.objects.*;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
@@ -92,7 +89,7 @@ public class GameRunningState extends AbstractAppState implements ScreenControll
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
 
-        /** Load this scene */
+        // Load this scene
         viewPort.setBackgroundColor(backgroundColor);
 
         ((SimpleApplication) app).setDisplayStatView(false);
@@ -152,10 +149,10 @@ public class GameRunningState extends AbstractAppState implements ScreenControll
         paddle1 = new Paddle("Player 1", stage1.getPlayer1());
         paddle2 = new Paddle("Player 2", stage1.getPlayer2());
         floor = new Floor(stage1.getFloor());
-        wall1 = new Floor(stage1.getWall1());
-        wall2 = new Floor(stage1.getWall2());
-        wall3 = new Floor(stage1.getWall3());
-        wall4 = new Floor(stage1.getWall4());
+        wall1 = new Wall(stage1.getWall1());
+        wall2 = new Wall(stage1.getWall2());
+        wall3 = new Wall(stage1.getWall3());
+        wall4 = new Wall(stage1.getWall4());
         ball = new Ball(stage1.getBall());
 
         paddle1.initGraphics(assetManager, rootNode);
@@ -229,18 +226,14 @@ public class GameRunningState extends AbstractAppState implements ScreenControll
         Deferred<Boolean, Long, String> startImage3EffectDeferred = new DeferredObject();
         Promise startImage3EffectPromise = startImage3EffectDeferred.promise();
 
-        startImage1.startEffect(EffectEventId.onCustom, () -> {
-            startImage1EffectDeferred.resolve(true);
-        }, "onFadeSizeIn");
+        startImage1.startEffect(EffectEventId.onCustom, () -> startImage1EffectDeferred.resolve(true), "onFadeSizeIn");
 
         startImage1EffectPromise.done((result) -> {
             System.out.println("Done with Effect Image 1!");
             startImage1.setVisible(false);
             startImage2.setVisible(true);
 
-            startImage2.startEffect(EffectEventId.onCustom, () -> {
-                startImage2EffectDeferred.resolve(true);
-            }, "onFadeSizeIn");
+            startImage2.startEffect(EffectEventId.onCustom, () -> startImage2EffectDeferred.resolve(true), "onFadeSizeIn");
         });
 
         startImage2EffectPromise.done((result) -> {
@@ -248,9 +241,7 @@ public class GameRunningState extends AbstractAppState implements ScreenControll
             startImage2.setVisible(false);
             startImage3.setVisible(true);
 
-            startImage3.startEffect(EffectEventId.onCustom, () -> {
-                startImage3EffectDeferred.resolve(true);
-            }, "onFadeSizeIn");
+            startImage3.startEffect(EffectEventId.onCustom, () -> startImage3EffectDeferred.resolve(true), "onFadeSizeIn");
         });
 
         dm.when(startImage1EffectPromise, startImage2EffectPromise, startImage3EffectPromise)
@@ -287,7 +278,7 @@ public class GameRunningState extends AbstractAppState implements ScreenControll
     /**
      * Update is only called when the game state is enabled.
      *
-     * @param tpf
+     * @param tpf Time
      */
     @Override
     public void update(float tpf) {

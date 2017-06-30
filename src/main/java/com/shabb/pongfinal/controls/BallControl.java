@@ -12,16 +12,10 @@ import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 
-import java.util.Iterator;
-
-/**
- * Created by xingo on 6/17/2017.
- */
 public class BallControl extends RigidBodyControl implements PhysicsCollisionListener, PhysicsTickListener {
     private float radius;
     private PhysicsGhostObject ghostObject;
     private Vector3f vector = new Vector3f();
-    private Vector3f vector2 = new Vector3f();
 
     public BallControl(CollisionShape shape, float radius) {
         super(shape);
@@ -74,19 +68,13 @@ public class BallControl extends RigidBodyControl implements PhysicsCollisionLis
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
-        //-- Nothing to do here...
-    }
-
-    @Override
-    public void physicsTick(PhysicsSpace space, float tpf) {
         Vector3f location = getPhysicsLocation();
         Vector3f impulse = Vector3f.ZERO;
 
-        for (Iterator<PhysicsCollisionObject> it = ghostObject.getOverlappingObjects().iterator(); it.hasNext();) {
-            PhysicsCollisionObject collisionObj = it.next();
+        for (PhysicsCollisionObject collisionObj : ghostObject.getOverlappingObjects()) {
             if (collisionObj instanceof PhysicsRigidBody && collisionObj.getClass() == PaddleControl.class) {
                 PhysicsRigidBody paddleCtrl = (PhysicsRigidBody) collisionObj;
-                vector2 = paddleCtrl.getPhysicsLocation();
+                Vector3f vector2 = paddleCtrl.getPhysicsLocation();
                 //-- Get the local location from ball and paddle
                 vector2.subtractLocal(location);
                 vector2.normalizeLocal();
@@ -97,12 +85,15 @@ public class BallControl extends RigidBodyControl implements PhysicsCollisionLis
                 impulse = new Vector3f(xForce, 0, zForce);
             }
         }
+        this.applyImpulse(impulse, Vector3f.ZERO);
+        System.out.println(impulse);
+    }
 
+    @Override
+    public void physicsTick(PhysicsSpace space, float tpf) {
         //-- Remove ghost object when we are done testing the ghost object for other collisions
         space.removeTickListener(this);
         space.remove(ghostObject);
-        this.applyImpulse(impulse, Vector3f.ZERO);
-        System.out.println(impulse);
     }
 
     public float getRadius() {

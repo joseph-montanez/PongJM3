@@ -16,9 +16,8 @@ import com.shabb.pongfinal.controls.PaddleControl;
 public class Paddle {
     private final Spatial obj;
     private String name;
-    private Material mat;
-    private BoxCollisionShape boxShape;
     private RigidBodyControl control;
+    private Vector3f pendingMove;
 
     public Paddle(String name, Spatial obj) {
         this.name = name;
@@ -26,7 +25,7 @@ public class Paddle {
     }
 
     public void initGraphics(AssetManager assetManager, Node rootNode) {
-        mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         mat.setBoolean("UseMaterialColors", true);
         mat.setColor("Diffuse", new ColorRGBA(0.5f, 0.5f, 0.5f, 1.0f));
         obj.setMaterial(mat);
@@ -34,6 +33,28 @@ public class Paddle {
     }
 
     public void update(float tpf, BulletAppState bulletAppState) {
+        //-- Review the pending move to see if the paddle has hit a wall
+        if (pendingMove != null) {
+            Boolean hitTopWall = obj.getUserData("hitTopWall");
+            Boolean hitBottomWall = obj.getUserData("hitBottomWall");
+
+            //-- If the paddle has hit the wall, then zero out the direction it hit
+            if (hitTopWall != null && hitTopWall) {
+                pendingMove.setZ(Math.min(0.0f, pendingMove.getZ()));
+                obj.setUserData("hitTopWall", false);
+            } else if (hitBottomWall != null && hitBottomWall) {
+                pendingMove.setZ(Math.max(0.0f, pendingMove.getZ()));
+                obj.setUserData("hitBottomWall", false);
+            }
+
+            //-- Apply the movement
+            Vector3f v = obj.getLocalTranslation().add(pendingMove);
+            obj.setLocalTranslation(v.x, v.y, v.z);
+
+            //-- Reset pending movement
+            pendingMove = null;
+        }
+
         //-- Update control (physics object) with current location and rotation
         if (control != null) {
             control.setPhysicsRotation(obj.getWorldRotation());
@@ -42,13 +63,12 @@ public class Paddle {
     }
 
     public void addLocalTranslation(float x, float y, float z) {
-        Vector3f v = obj.getLocalTranslation();
-        obj.setLocalTranslation(v.x + x, v.y + y, v.z + z);
+        pendingMove = new Vector3f(x, y, z);
     }
 
     public void initPhysics(BulletAppState bulletAppState) {
         Vector3f dimensions = ((BoundingBox) obj.getWorldBound()).getExtent(null);
-        boxShape = new BoxCollisionShape(dimensions);
+        BoxCollisionShape boxShape = new BoxCollisionShape(dimensions);
         control = new PaddleControl(boxShape);
         control.setPhysicsRotation(obj.getWorldRotation());
         control.setPhysicsLocation(obj.getWorldTranslation());

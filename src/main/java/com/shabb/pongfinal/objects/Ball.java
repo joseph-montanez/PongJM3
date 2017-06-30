@@ -13,14 +13,13 @@ import com.shabb.pongfinal.controls.BallControl;
 
 public class Ball {
     private Spatial obj;
-    private Material mat;
 
     public Ball(Spatial obj) {
         this.obj = obj;
     }
 
     public void initGraphics(AssetManager assetManager, Node rootNode) {
-        mat = assetManager.loadMaterial("Materials/Gold.j3m");
+        Material mat = assetManager.loadMaterial("Materials/Gold.j3m");
         obj.setMaterial(mat);
         obj.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
     }

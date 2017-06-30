@@ -4,9 +4,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -15,7 +13,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 public class Floor {
-    private Spatial obj;
+    protected Spatial obj;
 
     public Floor(Spatial obj) {
         this.obj = obj;

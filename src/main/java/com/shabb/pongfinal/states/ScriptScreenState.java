@@ -9,7 +9,6 @@ import com.jme3.audio.AudioRenderer;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -125,23 +124,21 @@ public class ScriptScreenState extends AbstractAppState implements ScreenControl
         inputManager.addListener(actionListener,"T", "CTRL");
     }
 
-    private ActionListener actionListener = new ActionListener() {
-        public void onAction(String name, boolean keyPressed, float tpf) {
+    private ActionListener actionListener = (name, keyPressed, tpf) -> {
 
-            if (keyPressed) {
-                pressedKeys.put(name, true);
-            } else {
-                pressedKeys.put(name, false);
-            }
+        if (keyPressed) {
+            pressedKeys.put(name, true);
+        } else {
+            pressedKeys.put(name, false);
+        }
 
-            System.out.println(pressedKeys);
+        System.out.println(pressedKeys);
 
-            Boolean tPressed = pressedKeys.containsKey("T") && pressedKeys.get("T");
-            Boolean ctrlPressed = pressedKeys.containsKey("CTRL") && pressedKeys.get("CTRL");
+        Boolean tPressed = pressedKeys.containsKey("T") && pressedKeys.get("T");
+        Boolean ctrlPressed = pressedKeys.containsKey("CTRL") && pressedKeys.get("CTRL");
 
-            if (tPressed && ctrlPressed) {
-                close();
-            }
+        if (tPressed && ctrlPressed) {
+            close();
         }
     };
 
