@@ -4,7 +4,7 @@ PongJM3 is a pong video game developed on the JVM with Kotlin, and jMonkeyEngine
  
 ## Screenshots
  ![Main Game](/assets/Screenshots/version1.png?raw=true "Pong Screenshot")
- ![Using Kotlin Scripting](/assets/Screenshots/version1.png?raw=true "Scripting Screenshot")
+ ![Using Kotlin Scripting](/assets/Screenshots/scriptingscreen.png?raw=true "Scripting Screenshot")
  
 ## Features
 
