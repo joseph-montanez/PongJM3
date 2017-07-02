@@ -34,9 +34,12 @@ import com.shabb.pongfinal.utils.VersionedReference
 import de.lessvoid.nifty.Nifty
 import de.lessvoid.nifty.effects.EffectEventId
 import de.lessvoid.nifty.elements.Element
+import de.lessvoid.nifty.elements.render.TextRenderer
 import de.lessvoid.nifty.loaderv2.types.RegisterEffectType
 import de.lessvoid.nifty.screen.Screen
 import de.lessvoid.nifty.screen.ScreenController
+import javafx.scene.control.TextInputControl
+import javafx.scene.text.Text
 import org.jdeferred.Deferred
 import org.jdeferred.DeferredManager
 import org.jdeferred.Promise
@@ -283,6 +286,18 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
 
         if (paddle1!!.scoreRef.update()) {
             println("Player 1 Scored!: " + paddle1!!.score.getObject() + " points")
+            val screen = nifty?.getScreen("GameInterface")
+            val player1ScoreText: Element? = screen?.findElementById("player1ScoreText")
+            val renderer = player1ScoreText?.getRenderer(TextRenderer::class.java)
+            renderer?.setText(paddle1!!.score.getObject().toString())
+        }
+
+        if (paddle2!!.scoreRef.update()) {
+            println("Player 2 Scored!: " + paddle2!!.score.getObject() + " points")
+            val screen = nifty?.getScreen("GameInterface")
+            val player2ScoreText: Element? = screen?.findElementById("player2ScoreText")
+            val renderer = player2ScoreText?.getRenderer(TextRenderer::class.java)
+            renderer?.setText(paddle2!!.score.getObject().toString())
         }
 
         GdxAI.getTimepiece().update(tpf)

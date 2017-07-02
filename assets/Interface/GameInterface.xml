@@ -3,6 +3,14 @@
     <useControls filename="nifty-default-controls.xml"/>
     <useStyles filename="nifty-default-styles.xml"/>
     <screen id="GameInterface" controller="com.shabb.pongfinal.states.ScriptScreenState">
+        <layer id="ScoreLayer" childLayout="horizontal" width="100%" align="center" valign="center" height="100%">
+            <text id="player1ScoreText" style="nifty-label" height="15%" width="50%"
+                  font="Interface/Fonts/arial-black-32.fnt"
+                  text="0 " color="#000f" textHAlign="right" textVAlign="top"/>
+            <text id="player2ScoreText" style="nifty-label" height="15%" width="50%"
+                  font="Interface/Fonts/arial-black-32.fnt"
+                  text=" 0" color="#000f" textHAlign="left" textVAlign="top"/>
+        </layer>
         <layer id="Layer" childLayout="center" width="100%" align="center" valign="center" height="100%">
             <image id="start-1" filename="Textures/start-1.png" width="328px" height="328px" align="center" valign="center">
                 <effect>
