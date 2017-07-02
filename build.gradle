@@ -33,10 +33,14 @@ dependencies {
     //-- Promises
     compile 'org.jdeferred:jdeferred-android-aar:1.2.6'
 
-    //-- Kotlin
+    //-- Kotlin For Scripting and Compiling
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-script-util:$kotlin_version"
+
+    //-- Used for AI
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-ai', version: '1.8.1'
+
 
     runtime project(':assets')
 

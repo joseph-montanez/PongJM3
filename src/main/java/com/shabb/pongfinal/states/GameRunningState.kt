@@ -1,5 +1,6 @@
 package com.shabb.pongfinal.states
 
+import com.badlogic.gdx.ai.GdxAI
 import com.jme3.app.Application
 import com.jme3.app.SimpleApplication
 import com.jme3.app.state.AbstractAppState
@@ -28,6 +29,8 @@ import com.jme3.scene.Node
 import com.jme3.shadow.DirectionalLightShadowFilter
 import com.jme3.shadow.DirectionalLightShadowRenderer
 import com.shabb.pongfinal.objects.*
+import com.shabb.pongfinal.utils.VersionedHolder
+import com.shabb.pongfinal.utils.VersionedReference
 import de.lessvoid.nifty.Nifty
 import de.lessvoid.nifty.effects.EffectEventId
 import de.lessvoid.nifty.elements.Element
@@ -138,7 +141,6 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
         viewPort.addProcessor(fpp)
 
 
-
         stage1 = Stage1()
         stage1!!.initGraphics(assetManager, rootNode)
 
@@ -149,7 +151,7 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
         wall2 = Wall(stage1!!.wall2!!)
         wall3 = Wall(stage1!!.wall3!!)
         wall4 = Wall(stage1!!.wall4!!)
-        ball = Ball(stage1!!.ball!!)
+        ball = Ball(stage1!!.ball!!, paddle1 as Paddle, paddle2 as Paddle)
 
         paddle1!!.initGraphics(assetManager, rootNode)
         paddle2!!.initGraphics(assetManager, rootNode)
@@ -278,6 +280,12 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
         this.app!!.setDisplayFps(true)
         paddle1!!.update(tpf, bulletAppState)
         paddle2!!.update(tpf, bulletAppState)
+
+        if (paddle1!!.scoreRef.update()) {
+            println("Player 1 Scored!: " + paddle1!!.score.getObject() + " points")
+        }
+
+        GdxAI.getTimepiece().update(tpf)
     }
 
     override fun stateAttached(stateManager: AppStateManager?) {

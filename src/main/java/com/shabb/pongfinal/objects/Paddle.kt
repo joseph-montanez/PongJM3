@@ -12,10 +12,19 @@ import com.jme3.renderer.queue.RenderQueue
 import com.jme3.scene.Node
 import com.jme3.scene.Spatial
 import com.shabb.pongfinal.controls.PaddleControl
+import com.shabb.pongfinal.utils.VersionedHolder
+import com.shabb.pongfinal.utils.VersionedReference
 
-class Paddle(private val name: String, private val obj: Spatial) {
+class Paddle(private val name: String, val obj: Spatial) {
     private var control: RigidBodyControl? = null
-    private var pendingMove: Vector3f? = null
+    private val pendingMove: VersionedHolder<Vector3f> = VersionedHolder<Vector3f>()
+    private val pendingMoveRef: VersionedReference<Vector3f> = pendingMove.createReference()
+    val score = VersionedHolder<Int>(0)
+    val scoreRef = score.createReference()
+
+    init {
+        obj.setUserData("score", score.getObject())
+    }
 
     fun initGraphics(assetManager: AssetManager, rootNode: Node) {
         val mat = Material(assetManager, "Common/MatDefs/Light/Lighting.j3md")
@@ -27,25 +36,23 @@ class Paddle(private val name: String, private val obj: Spatial) {
 
     fun update(tpf: Float, bulletAppState: BulletAppState) {
         //-- Review the pending move to see if the paddle has hit a wall
-        if (pendingMove != null) {
+        if (pendingMoveRef.update()) {
             val hitTopWall = obj.getUserData<Boolean>("hitTopWall")
             val hitBottomWall = obj.getUserData<Boolean>("hitBottomWall")
 
             //-- If the paddle has hit the wall, then zero out the direction it hit
+            val pos = pendingMove.getObject()
             if (hitTopWall != null && hitTopWall) {
-                pendingMove!!.setZ(Math.min(0.0f, pendingMove!!.getZ()))
+                pos.setZ(Math.min(0.0f,pos.getZ()))
                 obj.setUserData("hitTopWall", false)
             } else if (hitBottomWall != null && hitBottomWall) {
-                pendingMove!!.setZ(Math.max(0.0f, pendingMove!!.getZ()))
+                pos.setZ(Math.max(0.0f, pos.getZ()))
                 obj.setUserData("hitBottomWall", false)
             }
 
             //-- Apply the movement
-            val v = obj.localTranslation.add(pendingMove)
+            val v = obj.localTranslation.add(pos)
             obj.setLocalTranslation(v.x, v.y, v.z)
-
-            //-- Reset pending movement
-            pendingMove = null
         }
 
         //-- Update control (physics object) with current location and rotation
@@ -56,7 +63,7 @@ class Paddle(private val name: String, private val obj: Spatial) {
     }
 
     fun addLocalTranslation(x: Float, y: Float, z: Float) {
-        pendingMove = Vector3f(x, y, z)
+        pendingMove.setObject(Vector3f(x, y, z))
     }
 
     fun initPhysics(bulletAppState: BulletAppState) {
