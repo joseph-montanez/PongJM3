@@ -176,7 +176,7 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
 
     private fun initPhysics() {
         val bulletAppState = this.app!!.stateManager.getState(BulletAppState::class.java)
-        bulletAppState.isDebugEnabled = true
+//        bulletAppState.isDebugEnabled = true
         bulletAppState.physicsSpace.setGravity(Vector3f(0f, 0f, 0f))
 
         ball!!.initPhysics(bulletAppState)
