@@ -46,20 +46,22 @@ import org.jdeferred.Promise
 import org.jdeferred.impl.DefaultDeferredManager
 import org.jdeferred.impl.DeferredObject
 
-class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenController {
-    private val audioRenderer: AudioRenderer
-    private val guiViewPort: ViewPort
-    private val rootNode: Node
-    private val viewPort: ViewPort
-    private val guiNode: Node
-    private val assetManager: AssetManager
-    private val flyCam: FlyByCamera
-    private val cam: Camera
+class GameRunningState(val app: SimpleApplication) : AbstractAppState(), ScreenController {
+    private val audioRenderer: AudioRenderer = app.audioRenderer
+    private val guiViewPort: ViewPort = app.guiViewPort
+    private val rootNode: Node = app.rootNode
+    private val viewPort: ViewPort = app.viewPort
+    private val guiNode: Node = app.guiNode
+    private val assetManager: AssetManager = app.assetManager
+    private val inputManager: InputManager = app.inputManager
+    private val flyCam: FlyByCamera = app.flyByCamera
+    private val cam: Camera = app.camera
     private val localRootNode = Node("Game Screen RootNode")
     private val localGuiNode = Node("Game Screen GuiNode")
     private val backgroundColor = ColorRGBA.Blue
-    private val inputManager: InputManager
-    private var app: SimpleApplication? = null
+    private val backgroundMusic: AudioNode = AudioNode(assetManager, "Sounds/sphere.ogg", AudioData.DataType.Stream)
+    private val audioBounce: AudioNode = AudioNode(assetManager, "Sounds/361230__someguy22__8-bit-bounce.wav", AudioData.DataType.Buffer)
+
     private var paddle1: Paddle? = null
     private var paddle2: Paddle? = null
     private var floor: Floor? = null
@@ -68,28 +70,16 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
     private var wall2: Floor? = null
     private var wall3: Floor? = null
     private var wall4: Floor? = null
-    private var backgroundMusic: AudioNode? = null
     private var niftyDisplay: NiftyJmeDisplay? = null
     private var nifty: Nifty? = null
-    private var stage1: Stage1? = null
+    private var stage1: Stage1 = Stage1()
 
     init {
-        this.rootNode = app.rootNode
-        this.viewPort = app.viewPort
-        this.guiNode = app.guiNode
-        this.audioRenderer = app.audioRenderer
-        this.inputManager = app.inputManager
-        this.assetManager = app.assetManager
-        this.flyCam = app.flyByCamera
-        this.cam = app.camera
-        this.guiViewPort = app.guiViewPort
 
-        //        jphp.runtime;
     }
 
     override fun initialize(stateManager: AppStateManager?, app: Application?) {
         super.initialize(stateManager, app)
-        this.app = app as SimpleApplication?
 
         // Load this scene
         viewPort.backgroundColor = backgroundColor
@@ -145,16 +135,16 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
 
 
         stage1 = Stage1()
-        stage1!!.initGraphics(assetManager, rootNode)
+        stage1.initGraphics(assetManager, rootNode)
 
-        paddle1 = Paddle("Player 1", stage1!!.player1!!)
-        paddle2 = Paddle("Player 2", stage1!!.player2!!)
-        floor = Floor(stage1!!.floor!!)
-        wall1 = Wall(stage1!!.wall1!!)
-        wall2 = Wall(stage1!!.wall2!!)
-        wall3 = Wall(stage1!!.wall3!!)
-        wall4 = Wall(stage1!!.wall4!!)
-        ball = Ball(stage1!!.ball!!, paddle1 as Paddle, paddle2 as Paddle)
+        paddle1 = Paddle("Player 1", stage1.player1!!)
+        paddle2 = Paddle("Player 2", stage1.player2!!)
+        floor = Floor(stage1.floor!!)
+        wall1 = Wall(stage1.wall1!!)
+        wall2 = Wall(stage1.wall2!!)
+        wall3 = Wall(stage1.wall3!!)
+        wall4 = Wall(stage1.wall4!!)
+        ball = Ball(stage1.ball!!, paddle1 as Paddle, paddle2 as Paddle)
 
         paddle1!!.initGraphics(assetManager, rootNode)
         paddle2!!.initGraphics(assetManager, rootNode)
@@ -175,7 +165,7 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
     }
 
     private fun initPhysics() {
-        val bulletAppState = this.app!!.stateManager.getState(BulletAppState::class.java)
+        val bulletAppState = this.app.stateManager.getState(BulletAppState::class.java)
 //        bulletAppState.isDebugEnabled = true
         bulletAppState.physicsSpace.setGravity(Vector3f(0f, 0f, 0f))
 
@@ -253,12 +243,11 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
 
     private fun initAudio() {
         //-- Setup Audio
-        backgroundMusic = AudioNode(assetManager, "Sounds/sphere.ogg", AudioData.DataType.Stream)
-        backgroundMusic!!.isLooping = true
-        backgroundMusic!!.isPositional = false
-        backgroundMusic!!.volume = 1f
+        backgroundMusic.isLooping = true
+        backgroundMusic.isPositional = false
+        backgroundMusic.volume = 0.3f
         rootNode.attachChild(backgroundMusic)
-        backgroundMusic!!.play()
+        backgroundMusic.play()
     }
 
 
@@ -266,8 +255,8 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
         rootNode.detachChild(localRootNode)
         guiNode.detachChild(localGuiNode)
 
-        backgroundMusic!!.stop()
-        audioRenderer.deleteAudioData(backgroundMusic!!.audioData)
+        backgroundMusic.stop()
+        audioRenderer.deleteAudioData(backgroundMusic.audioData)
 
         super.cleanup()
     }
@@ -278,26 +267,36 @@ class GameRunningState(app: SimpleApplication) : AbstractAppState(), ScreenContr
      * @param tpf Time
      */
     override fun update(tpf: Float) {
-        val bulletAppState = this.app!!.stateManager.getState(BulletAppState::class.java)
+        val bulletAppState = app.stateManager.getState(BulletAppState::class.java)
 
-        this.app!!.setDisplayFps(true)
-        paddle1!!.update(tpf, bulletAppState)
-        paddle2!!.update(tpf, bulletAppState)
+        app.setDisplayFps(true)
+        paddle1?.update(tpf, bulletAppState)
+        paddle2?.update(tpf, bulletAppState)
 
-        if (paddle1!!.scoreRef.update()) {
+        if (paddle1?.scoreRef?.update() as Boolean) {
             println("Player 1 Scored!: " + paddle1!!.score.getObject() + " points")
             val screen = nifty?.getScreen("GameInterface")
             val player1ScoreText: Element? = screen?.findElementById("player1ScoreText")
             val renderer = player1ScoreText?.getRenderer(TextRenderer::class.java)
-            renderer?.setText(paddle1!!.score.getObject().toString())
+            renderer?.setText(paddle1?.score?.getObject().toString())
         }
 
-        if (paddle2!!.scoreRef.update()) {
-            println("Player 2 Scored!: " + paddle2!!.score.getObject() + " points")
+        if (paddle2?.scoreRef?.update() as Boolean) {
+            println("Player 2 Scored!: " + paddle2?.score?.getObject() + " points")
             val screen = nifty?.getScreen("GameInterface")
             val player2ScoreText: Element? = screen?.findElementById("player2ScoreText")
             val renderer = player2ScoreText?.getRenderer(TextRenderer::class.java)
-            renderer?.setText(paddle2!!.score.getObject().toString())
+            renderer?.setText(paddle2?.score?.getObject().toString())
+        }
+
+        if (stage1.ball?.userDataKeys?.contains("bounced") as Boolean) {
+            val bounced: Boolean? = stage1.ball?.getUserData("bounced")
+
+            if (bounced is Boolean && bounced) {
+                audioBounce.volume = 15f
+                audioBounce.play()
+                stage1.ball?.setUserData("bounced", false)
+            }
         }
 
         GdxAI.getTimepiece().update(tpf)

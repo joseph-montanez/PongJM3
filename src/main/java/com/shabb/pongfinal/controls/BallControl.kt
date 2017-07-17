@@ -10,18 +10,16 @@ import com.jme3.bullet.control.RigidBodyControl
 import com.jme3.bullet.objects.PhysicsGhostObject
 import com.jme3.bullet.objects.PhysicsRigidBody
 import com.jme3.math.Vector3f
-import com.jme3.scene.Geometry
 import com.jme3.scene.Spatial
 import com.shabb.pongfinal.collisions.PaddleCollision
 
 class BallControl(shape: CollisionShape, var radius: Float, val player1Scored: () -> Unit, val player2Scored: () -> Unit) : RigidBodyControl(shape), PhysicsCollisionListener, PhysicsTickListener {
     private var ghostObject: PhysicsGhostObject? = null
-    private val vector = Vector3f()
 
     init {
 
         //-- Set initial ball velocity
-        linearVelocity = Vector3f(20f, 0f, 0f)
+        linearVelocity = Vector3f(40f, 0f, 0f)
         //-- Do not slow down the ball when sliding
         friction = 0f
         //-- Apply as little mass as possible to prevent the ball from stopping
@@ -53,6 +51,7 @@ class BallControl(shape: CollisionShape, var radius: Float, val player1Scored: (
         if (collisionWithBall && collisionWithPaddle) {
             //-- Ball and paddle has collided lets add a ghost object to detect any other collisions
             PaddleCollision(this, radius, space)
+            setBallAsBounced()
         }
 
 
@@ -68,6 +67,8 @@ class BallControl(shape: CollisionShape, var radius: Float, val player1Scored: (
             } else if (wallName == "WallLeft1") {
                 println("Player 2 Scored!")
                 player2Scored()
+            } else {
+                setBallAsBounced()
             }
         }
 
@@ -86,7 +87,7 @@ class BallControl(shape: CollisionShape, var radius: Float, val player1Scored: (
                 //-- Get the up / down position to decide on the force to apply
                 val z = vector2.getZ()
                 val zForce = -1 * z / 100
-                val xForce = if (vector2.getX() > 0) -0.0005f else 0.0005f
+                val xForce = if (vector2.getX() > 0) -0.1f else 0.1f
                 impulse = Vector3f(xForce, 0f, zForce)
             }
         }
@@ -98,5 +99,10 @@ class BallControl(shape: CollisionShape, var radius: Float, val player1Scored: (
         //-- Remove ghost object when we are done testing the ghost object for other collisions
         space.removeTickListener(this)
         space.remove(ghostObject)
+    }
+
+    fun setBallAsBounced() {
+        val ball = this.userObject as Spatial
+        ball.setUserData("bounced", true)
     }
 }

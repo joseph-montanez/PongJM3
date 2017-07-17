@@ -17,9 +17,9 @@ import com.shabb.pongfinal.utils.VersionedReference
 
 class Paddle(private val name: String, val obj: Spatial) {
     private var control: RigidBodyControl? = null
-    private val pendingMove: VersionedHolder<Vector3f> = VersionedHolder<Vector3f>()
-    private val pendingMoveRef: VersionedReference<Vector3f> = pendingMove.createReference()
-    val score = VersionedHolder<Int>(0)
+    private val pendingMove = VersionedHolder<Vector3f>()
+    private val pendingMoveRef = pendingMove.createReference()
+    val score = VersionedHolder(0)
     val scoreRef = score.createReference()
 
     init {
