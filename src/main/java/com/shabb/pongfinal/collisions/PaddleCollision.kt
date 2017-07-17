@@ -23,22 +23,23 @@ class PaddleCollision (val control: RigidBodyControl,
     }
 
     override fun prePhysicsTick(space: PhysicsSpace, tpf: Float) {
-        val location = control.getPhysicsLocation(null)
+        val centerOfBall = control.physicsLocation
         var impulse = Vector3f.ZERO
 
-        for (collisionObj in ghostObject!!.overlappingObjects) {
+        ghostObject?.overlappingObjects?.forEach { collisionObj ->
             if (collisionObj is PhysicsRigidBody && collisionObj is PaddleControl) {
-                val vector2 = collisionObj.physicsLocation
+                val centerOfPaddle = collisionObj.physicsLocation
                 //-- Get the local location from ball and paddle
-                vector2.subtractLocal(location)
-                vector2.normalizeLocal()
+                centerOfPaddle.subtractLocal(centerOfBall)
+                centerOfPaddle.normalizeLocal()
                 //-- Get the up / down position to decide on the force to apply
-                val z = vector2.getZ()
+                val z = centerOfPaddle.getZ()
                 val zForce = -1 * z / 100
-                val xForce = if (vector2.getX() > 0) -0.0005f else 0.0005f
+                val xForce = if (centerOfPaddle.getX() > 0) -0.08f else 0.08f
                 impulse = Vector3f(xForce, 0f, zForce)
             }
         }
+
         control.applyImpulse(impulse, Vector3f.ZERO)
     }
 
